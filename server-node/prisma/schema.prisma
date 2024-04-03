@@ -8,11 +8,26 @@ datasource db {
 }
 
 model Event {
-  id      String  @id @default(uuid())
-  title   String
-  details String?
-  slug    String  @unique
-  maximumAtendees Int? @map("maximum_atendees") 
+  id              String    @id @default(uuid())
+  title           String
+  details         String?
+  slug            String    @unique
+  maximumAtendees Int?      @map("maximum_atendees")
+  atendees        Atendee[]
 
   @@map("events")
+}
+
+model Atendee {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  createdAt DateTime @default(now()) @map("created_at")
+  eventId   String   @map("event_id")
+
+  event Event @relation(fields: [eventId], references: [id])
+
+  //combinação dos 2 campos evento e email é unica, não se repete
+  @@unique([eventId, email])
+  @@map("atendees")
 }

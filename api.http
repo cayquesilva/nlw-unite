@@ -2,7 +2,25 @@ POST http://localhost:3333/events
 Content-Type: application/json
 
 {
-    "title": "Unite Summit",
-    "details": "Um evento para quem é apaixonado por programação",
-    "maximumAtendees": 100
+    "title": "Novo evento 3",
+    "details": null,
+    "maximumAtendees": 1
 }
+
+###
+
+POST http://localhost:3333/events/a1e4d309-d487-48ae-a44e-44b7dedd95bd/atendees
+Content-Type: application/json
+
+{
+    "name": "Cayque Silva",
+    "email": "cayque.silva3@edu.campinagrande.pb.gov.br"
+}
+
+###
+
+GET http://localhost:3333/events/a1e4d309-d487-48ae-a44e-44b7dedd95bd
+
+###
+
+GET http://localhost:3333/atendees/2/badge
