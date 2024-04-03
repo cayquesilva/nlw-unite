@@ -4,5 +4,5 @@ Content-Type: application/json
 {
     "title": "Unite Summit",
     "details": "Um evento para quem é apaixonado por programação",
-    "maximumAttendees": 100
+    "maximumAtendees": 100
 }

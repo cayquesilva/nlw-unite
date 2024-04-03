@@ -21,7 +21,7 @@ app.post('/events', async (request, reply) => {
     const createEventSchema = z.object({
         title: z.string().min(4),
         details: z.string().nullable(),
-        maximumAttendees: z.number().int().positive().nullable(),
+        maximumAtendees: z.number().int().positive().nullable(),
     })
 
     //verifica se o que foi enviado é igual ao modelo do schema
@@ -31,7 +31,7 @@ app.post('/events', async (request, reply) => {
         data: {
             title: data.title,
             details: data.details,
-            maximumAttendees: data.maximumAttendees,
+            maximumAtendees: data.maximumAtendees,
             slug: new Date().toISOString(),
         },
     })
