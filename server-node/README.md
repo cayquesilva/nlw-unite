@@ -1,4 +1,4 @@
-#pass.in
+#pass.in Back-end
 
 O pass.in é uma aplicação de gestão de participantes em eventos presenciais.
 
