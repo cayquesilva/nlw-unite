@@ -9,12 +9,12 @@ Os participantes inscritos podem emitir uma credencial para check-in no dia do e
 O sistema fará um scan da credencial do participante para permitir a entrada no evento.
 
 ##Requisitos
- - [] Ser responsivo
- - [] Conectar com o back-end em NodeJS também da NLW
+ - [ ] Ser responsivo
+ - [ ] Conectar com o back-end em NodeJS também da NLW
 
 
 ##Modificações
 
-- [] Realizar customização no tailwind, ao seu gosto
-- [] Criar depois o front para aplicação mobile
+- [ ] Realizar customização no tailwind, ao seu gosto
+- [ ] Criar depois o front para aplicação mobile
 
