@@ -3,13 +3,17 @@ import { z } from "zod"
 import { generateSlug } from "../utils/generate-slug"
 import { prisma } from "../lib/prisma"
 import { FastifyInstance } from "fastify"
+import { BadRequest } from "./_errors/bad-request"
 
 export async function createEvent(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
     .post('/events', {
         schema:{
+            summary: 'Create an event',
+            tags: ['events'],
             //cria um modelo "schema" para o json 'body' a ser enviado para o banco
             body: z.object({
+                //poderia colocar dentro da string do titulo: {invalid_type_error: 'O título precisa ser um texto'} para customizar a mensagem de error 
                 title: z.string().min(4),
                 details: z.string().nullable(),
                 maximumAtendees: z.number().int().positive().nullable(),
@@ -40,7 +44,7 @@ export async function createEvent(app: FastifyInstance) {
         })
     
         if(eventWithSameSlug !== null){
-            throw new Error('Another event with same title already exists.')
+            throw new BadRequest('Another event with same title already exists.')
         }
     
         const event = await prisma.event.create({

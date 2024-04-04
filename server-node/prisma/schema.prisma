@@ -25,9 +25,20 @@ model Atendee {
   createdAt DateTime @default(now()) @map("created_at")
   eventId   String   @map("event_id")
 
-  event Event @relation(fields: [eventId], references: [id])
+  event   Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  checkIn CheckIn?
 
   //combinação dos 2 campos evento e email é unica, não se repete
   @@unique([eventId, email])
   @@map("atendees")
+}
+
+model CheckIn {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+
+  atendee   Atendee @relation(fields: [atendeeId], references: [id], onDelete: Cascade)
+  atendeeId Int     @unique @map("atendee_id")
+
+  @@map("check_ins")
 }
