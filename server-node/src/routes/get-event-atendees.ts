@@ -1,7 +1,8 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { z } from "zod";
+import { promise, z } from "zod";
 import { prisma } from "../lib/prisma";
+import { count } from 'console';
 
 export async function getEventAtendees(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
@@ -28,7 +29,8 @@ export async function getEventAtendees(app: FastifyInstance) {
                             createdAt: z.date(),
                             checkedInAt: z.date().nullable(),
                         })
-                    )
+                    ),
+                    total: z.number(),
                 })
             },
         }
@@ -37,35 +39,47 @@ export async function getEventAtendees(app: FastifyInstance) {
         const { pageIndex,query } = request.query
 
         //findmany para pegar todos os atendees
-        const atendees = await prisma.atendee.findMany({
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                createdAt: true,
-                //innner join permite pela relação, pegar dados com select na tabela checkin.
-                checkIn: {
-                    select: {
-                        createdAt: true,
+        const [atendees,total] = await Promise.all([
+            prisma.atendee.findMany({
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    createdAt: true,
+                    //innner join permite pela relação, pegar dados com select na tabela checkin.
+                    checkIn: {
+                        select: {
+                            createdAt: true,
+                        }
                     }
+                },
+                //condicional para usar a query string para busca, se deixar em uma linha, é um if ternário...
+                where: query ? {
+                    eventId,
+                    name: {
+                        contains: query,
+                    }
+                }:{
+                    eventId,                
+                },
+                //paginação, pega 10 e skipa os 10 primeiros vezes a página em que se encontra.
+                take: 10,
+                skip: pageIndex * 10,
+                orderBy:{
+                    createdAt: 'desc',
                 }
-            },
-            //condicional para usar a query string para busca, se deixar em uma linha, é um if ternário...
-            where: query ? {
-                eventId,
-                name: {
-                    contains: query,
-                }
-            }:{
-                eventId,                
-            },
-            //paginação, pega 10 e skipa os 10 primeiros vezes a página em que se encontra.
-            take: 10,
-            skip: pageIndex * 10,
-            orderBy:{
-                createdAt: 'desc',
-            }
-        })
+            }),
+            prisma.atendee.count({
+                where: query ? {
+                    eventId,
+                    name: {
+                        contains: query,
+                    }
+                } : {
+                    eventId,
+                },
+            })
+        ])
         
         return reply.send({ 
             atendees: atendees.map(atendee => {
@@ -77,7 +91,8 @@ export async function getEventAtendees(app: FastifyInstance) {
                     //sintaxe reduzida pra acessar o createdAt só se existir Checkin e o ?? caso não exista, garante que retorna null
                     checkedInAt: atendee.checkIn?.createdAt ?? null
                 }
-            })
+            }),
+            total,
          })
     })
     
